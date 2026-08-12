@@ -1,0 +1,56 @@
+name: Change Kaspi Preorder
+
+on:
+  workflow_dispatch:
+    inputs:
+      preorder:
+        description: "Preorder days"
+        required: true
+        default: "1"
+        type: choice
+        options:
+          - "1"
+          - "2"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Change preorder
+        env:
+          PREORDER: ${{ inputs.preorder }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+
+          file = "ACTIVE_preorder1.xml"
+          value = os.environ["PREORDER"]
+
+          with open(file, "r", encoding="utf-8") as f:
+              text = f.read()
+
+          text = re.sub(
+              r'preOrder="[^"]*"',
+              f'preOrder="{value}"',
+              text
+          )
+
+          with open(file, "w", encoding="utf-8") as f:
+              f.write(text)
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "Kaspi Preorder Bot"
+          git config user.email "actions@github.com"
+          git add ACTIVE_preorder1.xml
+          git commit -m "Set Kaspi preorder" || exit 0
+          git push
