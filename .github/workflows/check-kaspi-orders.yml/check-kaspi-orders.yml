@@ -1,0 +1,42 @@
+name: Check Kaspi Orders
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+
+jobs:
+  check-orders:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check new Kaspi orders
+        env:
+          KASPI_TOKEN: ${{ secrets.KASPI_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          URL="https://kaspi.kz/shop/api/v2/orders?page[number]=0&page[size]=100&filter[orders][state]=NEW"
+
+          echo "=== KASPI NEW ORDERS ==="
+          echo "Checking Kaspi for new orders..."
+
+          RESPONSE=$(curl -fsS \
+            -H "Content-Type: application/vnd.api+json" \
+            -H "X-Auth-Token: ${KASPI_TOKEN}" \
+            "$URL")
+
+          COUNT=$(echo "$RESPONSE" | jq '.data | length')
+
+          echo "New orders found: $COUNT"
+          echo
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "No new orders."
+            exit 0
+          fi
+
+          echo "$RESPONSE" | jq -r '
+            .data[] |
+            "ORDER: \(.attributes.code // "-") | STATUS: \(.attributes.status // "-") | SUM: \(.attributes.totalPrice // 0) ₸ | DELIVERY: \(.attributes.deliveryMode // "-")"
+          '
