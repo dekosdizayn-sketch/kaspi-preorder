@@ -8,9 +8,10 @@ on:
         required: true
         default: "1"
         type: choice
-        options:
-          - "1"
-          - "2"
+             options:
+        - "0"
+        - "1"
+        - "2"
 
 permissions:
   contents: write
