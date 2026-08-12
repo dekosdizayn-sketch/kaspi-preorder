@@ -26,7 +26,8 @@ jobs:
 
       - name: Change preorder
         env:
-          PREORDER: ${{ inputs.preorder }}
+          PREORDER: ${{ inputs.preorder }}     
+          KASPI_TOKEN: ${{ secrets.KASPI_TOKEN }}
         run: |
           python3 - <<'PY'
           import os
