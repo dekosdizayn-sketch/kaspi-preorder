@@ -1,0 +1,141 @@
+name: Kaspi Analytics
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  analytics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get Kaspi orders and build analytics
+        env:
+          KASPI_TOKEN: ${{ secrets.KASPI_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p data
+
+          PAGE=0
+          ALL_ORDERS="[]"
+
+          while true; do
+            echo "Getting Kaspi page: $PAGE"
+
+            URL="https://kaspi.kz/shop/api/v2/orders?page[number]=${PAGE}&page[size]=100"
+
+            RESPONSE=$(curl -fsS \
+              -H "Content-Type: application/vnd.api+json" \
+              -H "X-Auth-Token: ${KASPI_TOKEN}" \
+              "$URL")
+
+            COUNT=$(echo "$RESPONSE" | jq '.data | length')
+
+            echo "Orders on page: $COUNT"
+
+            if [ "$COUNT" -eq 0 ]; then
+              break
+            fi
+
+            ALL_ORDERS=$(jq -s '.[0] + .[1]' \
+              <(echo "$ALL_ORDERS") \
+              <(echo "$RESPONSE" | jq '.data'))
+
+            PAGE=$((PAGE + 1))
+
+            if [ "$PAGE" -ge 100 ]; then
+              echo "Safety limit reached."
+              break
+            fi
+          done
+
+          TOTAL_ORDERS=$(echo "$ALL_ORDERS" | jq 'length')
+
+          TOTAL_SALES=$(echo "$ALL_ORDERS" | jq '
+            map(.attributes.totalPrice // 0)
+            | add // 0
+          ')
+
+          AVERAGE_CHECK=$(echo "$ALL_ORDERS" | jq '
+            if length == 0 then 0
+            else
+              (map(.attributes.totalPrice // 0) | add) / length
+            end
+          ')
+
+          COMPLETED=$(echo "$ALL_ORDERS" | jq '
+            map(select(.attributes.status == "COMPLETED")) | length
+          ')
+
+          CANCELLED=$(echo "$ALL_ORDERS" | jq '
+            map(select(.attributes.status == "CANCELLED")) | length
+          ')
+
+          ACCEPTED=$(echo "$ALL_ORDERS" | jq '
+            map(select(.attributes.status == "ACCEPTED_BY_MERCHANT")) | length
+          ')
+
+          NEW=$(echo "$ALL_ORDERS" | jq '
+            map(select(.attributes.status == "APPROVED_BY_BANK")) | length
+          ')
+
+          UPDATED=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          jq -n \
+            --arg updated "$UPDATED" \
+            --argjson total_orders "$TOTAL_ORDERS" \
+            --argjson total_sales "$TOTAL_SALES" \
+            --argjson average_check "$AVERAGE_CHECK" \
+            --argjson completed "$COMPLETED" \
+            --argjson cancelled "$CANCELLED" \
+            --argjson accepted "$ACCEPTED" \
+            --argjson new "$NEW" \
+            --argjson orders "$ALL_ORDERS" \
+            '{
+              updated_at: $updated,
+              total_orders: $total_orders,
+              total_sales: $total_sales,
+              average_check: $average_check,
+              statuses: {
+                completed: $completed,
+                cancelled: $cancelled,
+                accepted: $accepted,
+                new: $new
+              },
+              orders: $orders
+            }' > data/analytics.json
+
+          echo ""
+          echo "=============================="
+          echo "KASPI ANALYTICS"
+          echo "=============================="
+          echo "Total orders: $TOTAL_ORDERS"
+          echo "Total sales: $TOTAL_SALES ₸"
+          echo "Average check: $AVERAGE_CHECK ₸"
+          echo "Completed: $COMPLETED"
+          echo "Cancelled: $CANCELLED"
+          echo "Accepted: $ACCEPTED"
+          echo "New: $NEW"
+          echo "=============================="
+
+      - name: Save analytics
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/analytics.json
+
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Update Kaspi analytics"
+            git push
+          fi
