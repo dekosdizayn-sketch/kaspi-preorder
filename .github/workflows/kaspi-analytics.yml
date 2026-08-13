@@ -91,23 +91,34 @@ jobs:
                               response.read().decode("utf-8")
                           )
 
-                  except (
-                      HTTPError,
-                      URLError,
-                      TimeoutError,
-                      OSError
-                  ) as error:
+                 except HTTPError as error:
 
-                      last_error = error
+    body = error.read().decode("utf-8", errors="replace")
 
-                      print(
-                          f"API error. Retry {attempt + 1}/{retries}"
-                      )
+    print(f"HTTP ERROR: {error.code}")
+    print(f"RESPONSE BODY: {body}")
 
-                      time.sleep(
-                          min(2 ** attempt, 15)
-                      )
+    last_error = error
 
+    time.sleep(
+        min(2 ** attempt, 15)
+    )
+
+except (
+    URLError,
+    TimeoutError,
+    OSError
+) as error:
+
+    last_error = error
+
+    print(
+        f"API error. Retry {attempt + 1}/{retries}: {error}"
+    )
+
+    time.sleep(
+        min(2 ** attempt, 15)
+    )
               raise RuntimeError(
                   f"API request failed: {url} / {last_error}"
               )
