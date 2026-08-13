@@ -30,7 +30,7 @@ jobs:
           while true; do
             echo "Getting Kaspi page: $PAGE"
 
-            URL="https://kaspi.kz/shop/api/v2/orders?page[number]=${PAGE}&page[size]=100"
+           URL="https://kaspi.kz/shop/api/v2/orders?page%5Bnumber%5D=${PAGE}&page%5Bsize%5D=100"
 
             RESPONSE=$(curl -fsS \
               -H "Content-Type: application/vnd.api+json" \
