@@ -1,0 +1,28 @@
+name: Telegram Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find Telegram chat and send test
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          RESPONSE=$(curl -fsS "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates")
+          CHAT_ID=$(echo "$RESPONSE" | jq -r '.result | last | .message.chat.id // empty')
+
+          if [ -z "$CHAT_ID" ]; then
+            echo "Telegram chat not found. Open your bot in Telegram and send /start, then run this workflow again."
+            exit 1
+          fi
+
+          curl -fsS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg chat_id "$CHAT_ID" '{chat_id: $chat_id, text: "✅ Telegram байланысы жұмыс істеп тұр! Kaspi заказдары туралы хабарламалар осы чатқа келеді."}')"
+
+          echo "Telegram test message sent successfully."
