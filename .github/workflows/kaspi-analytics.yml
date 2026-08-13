@@ -3,7 +3,7 @@ name: Kaspi Analytics
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 3 * * *"
 
 permissions:
   contents: write
@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Get Kaspi orders and build analytics
+      - name: Get Kaspi analytics
         env:
           KASPI_TOKEN: ${{ secrets.KASPI_TOKEN }}
         run: |
@@ -24,104 +24,1008 @@ jobs:
 
           mkdir -p data
 
-          PAGE=0
-          ALL_ORDERS="[]"
+          python3 <<'PY'
+          import json
+          import os
+          import time
+          import re
+          from urllib.request import Request, urlopen
+          from urllib.error import HTTPError, URLError
+          from concurrent.futures import ThreadPoolExecutor, as_completed
+          from datetime import datetime, timezone
 
-          while true; do
-            echo "Getting Kaspi page: $PAGE"
+          TOKEN = os.environ["KASPI_TOKEN"]
 
-           URL="https://kaspi.kz/shop/api/v2/orders?page%5Bnumber%5D=${PAGE}&page%5Bsize%5D=10"
+          BASE = "https://kaspi.kz/shop/api/v2"
 
-            RESPONSE=$(curl -4 --http1.1 -fsS --connect-timeout 20 --max-time 90 --retry 5 --retry-delay 5 --retry-all-errors -H "Content-Type: application/vnd.api+json" -H "X-Auth-Token: ${KASPI_TOKEN}" "$URL")
+          HEADERS = {
+              "Content-Type": "application/vnd.api+json",
+              "Accept": "application/vnd.api+json",
+              "X-Auth-Token": TOKEN,
+              "User-Agent": "Kaspi-Analytics"
+          }
 
-            COUNT=$(echo "$RESPONSE" | jq '.data | length')
+          # =========================
+          # БИЗДІҢ ШЫҒЫН ЕРЕЖЕЛЕРІ
+          # =========================
 
-            echo "Orders on page: $COUNT"
+          COMMISSION = 0.115
+          KASPI_PAY = 0.0095
+          TAX = 0.04
 
-            if [ "$COUNT" -eq 0 ]; then
-              break
-            fi
+          BOX_COST = 1500
+          DELIVERY_COST = 2000
 
-            ALL_ORDERS=$(jq -s '.[0] + .[1]' \
-              <(echo "$ALL_ORDERS") \
-              <(echo "$RESPONSE" | jq '.data'))
+          PAINTING_M2 = 17500
+          PANEL_M2 = 27500
+          LIGHT_COST = 14000
 
-            PAGE=$((PAGE + 1))
+          # Самовывоз есепке кірмейді
+          PICKUP_WORDS = [
+              "PICKUP",
+              "SELF_PICKUP",
+              "Самовывоз"
+          ]
 
-            if [ "$PAGE" -ge 100 ]; then
-              echo "Safety limit reached."
-              break
-            fi
-          done
+          # =========================
+          # API REQUEST
+          # =========================
 
-          TOTAL_ORDERS=$(echo "$ALL_ORDERS" | jq 'length')
+          def get_json(url, retries=5):
 
-          TOTAL_SALES=$(echo "$ALL_ORDERS" | jq '
-            map(.attributes.totalPrice // 0)
-            | add // 0
-          ')
+              last_error = None
 
-          AVERAGE_CHECK=$(echo "$ALL_ORDERS" | jq '
-            if length == 0 then 0
-            else
-              (map(.attributes.totalPrice // 0) | add) / length
-            end
-          ')
+              for attempt in range(retries):
 
-          COMPLETED=$(echo "$ALL_ORDERS" | jq '
-            map(select(.attributes.status == "COMPLETED")) | length
-          ')
+                  try:
 
-          CANCELLED=$(echo "$ALL_ORDERS" | jq '
-            map(select(.attributes.status == "CANCELLED")) | length
-          ')
+                      request = Request(
+                          url,
+                          headers=HEADERS,
+                          method="GET"
+                      )
 
-          ACCEPTED=$(echo "$ALL_ORDERS" | jq '
-            map(select(.attributes.status == "ACCEPTED_BY_MERCHANT")) | length
-          ')
+                      with urlopen(request, timeout=45) as response:
 
-          NEW=$(echo "$ALL_ORDERS" | jq '
-            map(select(.attributes.status == "APPROVED_BY_BANK")) | length
-          ')
+                          return json.loads(
+                              response.read().decode("utf-8")
+                          )
 
-          UPDATED=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+                  except (
+                      HTTPError,
+                      URLError,
+                      TimeoutError,
+                      OSError
+                  ) as error:
 
-          jq -n \
-            --arg updated "$UPDATED" \
-            --argjson total_orders "$TOTAL_ORDERS" \
-            --argjson total_sales "$TOTAL_SALES" \
-            --argjson average_check "$AVERAGE_CHECK" \
-            --argjson completed "$COMPLETED" \
-            --argjson cancelled "$CANCELLED" \
-            --argjson accepted "$ACCEPTED" \
-            --argjson new "$NEW" \
-            --argjson orders "$ALL_ORDERS" \
-            '{
-              updated_at: $updated,
-              total_orders: $total_orders,
-              total_sales: $total_sales,
-              average_check: $average_check,
-              statuses: {
-                completed: $completed,
-                cancelled: $cancelled,
-                accepted: $accepted,
-                new: $new
+                      last_error = error
+
+                      print(
+                          f"API error. Retry {attempt + 1}/{retries}"
+                      )
+
+                      time.sleep(
+                          min(2 ** attempt, 15)
+                      )
+
+              raise RuntimeError(
+                  f"API request failed: {url} / {last_error}"
+              )
+
+          # =========================
+          # ORDER LIST
+          # =========================
+
+          print("================================")
+          print("KASPI ANALYTICS")
+          print("================================")
+
+          all_orders = []
+
+          for page in range(100):
+
+              print(
+                  f"Getting orders page {page}"
+              )
+
+              url = (
+                  BASE
+                  + "/orders?"
+                  + f"page%5Bnumber%5D={page}"
+                  + "&page%5Bsize%5D=100"
+              )
+
+              response = get_json(url)
+
+              rows = response.get("data", [])
+
+              print(
+                  f"Orders received: {len(rows)}"
+              )
+
+              if not rows:
+                  break
+
+              all_orders.extend(rows)
+
+              if len(rows) < 100:
+                  break
+
+          print(
+              f"TOTAL API ORDERS: {len(all_orders)}"
+          )
+
+          # =========================
+          # DELIVERY MODE
+          # =========================
+
+          def get_delivery_mode(order):
+
+              attributes = (
+                  order.get("attributes")
+                  or {}
+              )
+
+              return str(
+                  attributes.get("deliveryMode")
+                  or attributes.get("deliveryType")
+                  or ""
+              )
+
+          # =========================
+          # SAMOVYVOZ БӨЛУ
+          # =========================
+
+          pickup_orders = []
+
+          sales_orders = []
+
+          for order in all_orders:
+
+              mode = get_delivery_mode(order)
+
+              is_pickup = any(
+                  word.lower() in mode.lower()
+                  for word in PICKUP_WORDS
+              )
+
+              if is_pickup:
+                  pickup_orders.append(order)
+              else:
+                  sales_orders.append(order)
+
+          print(
+              f"Pickup excluded: {len(pickup_orders)}"
+          )
+
+          print(
+              f"Orders for analytics: {len(sales_orders)}"
+          )
+
+          # =========================
+          # ORDER ENTRIES
+          # =========================
+
+          def get_entries(order):
+
+              order_id = order.get("id")
+
+              if not order_id:
+                  return order, []
+
+              url = (
+                  BASE
+                  + "/orders/"
+                  + str(order_id)
+                  + "/entries"
+              )
+
+              try:
+
+                  response = get_json(url)
+
+                  return (
+                      order,
+                      response.get("data", [])
+                  )
+
+              except Exception as error:
+
+                  print(
+                      f"Entries error "
+                      f"{order_id}: {error}"
+                  )
+
+                  return order, []
+
+          order_entries = []
+
+          with ThreadPoolExecutor(
+              max_workers=8
+          ) as executor:
+
+              futures = [
+                  executor.submit(
+                      get_entries,
+                      order
+                  )
+                  for order in sales_orders
+              ]
+
+              for future in as_completed(futures):
+
+                  order, entries = future.result()
+
+                  for entry in entries:
+
+                      order_entries.append(
+                          (order, entry)
+                      )
+
+          print(
+              f"TOTAL PRODUCT ENTRIES: "
+              f"{len(order_entries)}"
+          )
+
+          # =========================
+          # MASTER PRODUCT ID
+          # =========================
+
+          def get_master_product_id(entry):
+
+              relationships = (
+                  entry.get("relationships")
+                  or {}
+              )
+
+              product = (
+                  relationships.get("product")
+                  or {}
+              )
+
+              data = (
+                  product.get("data")
+                  or {}
+              )
+
+              return data.get("id")
+
+          master_ids = set()
+
+          for order, entry in order_entries:
+
+              master_id = get_master_product_id(
+                  entry
+              )
+
+              if master_id:
+                  master_ids.add(master_id)
+
+          print(
+              f"PRODUCTS FOUND: {len(master_ids)}"
+          )
+
+          # =========================
+          # PRODUCT DATA
+          # =========================
+
+          def get_product(master_id):
+
+              urls = [
+
+                  f"{BASE}/masterproducts/"
+                  f"{master_id}/merchantProduct",
+
+                  f"{BASE}/masterproducts/"
+                  f"{master_id}"
+
+              ]
+
+              result = {}
+
+              for url in urls:
+
+                  try:
+
+                      response = get_json(url)
+
+                      data = (
+                          response.get("data")
+                          or {}
+                      )
+
+                      attributes = (
+                          data.get("attributes")
+                          or {}
+                      )
+
+                      result.update(attributes)
+
+                      result["_raw"] = response
+
+                      result["id"] = (
+                          data.get("id")
+                          or master_id
+                      )
+
+                      if (
+                          result.get("name")
+                          or result.get("title")
+                          or result.get("images")
+                      ):
+                          break
+
+                  except Exception:
+                      continue
+
+              return master_id, result
+
+          products = {}
+
+          with ThreadPoolExecutor(
+              max_workers=8
+          ) as executor:
+
+              futures = [
+                  executor.submit(
+                      get_product,
+                      master_id
+                  )
+                  for master_id in master_ids
+              ]
+
+              for future in as_completed(futures):
+
+                  master_id, product = (
+                      future.result()
+                  )
+
+                  products[
+                      master_id
+                  ] = product
+
+          # =========================
+          # IMAGE URLS
+          # =========================
+
+          def find_images(value):
+
+              result = []
+
+              if isinstance(value, dict):
+
+                  for key, item in value.items():
+
+                      key_lower = key.lower()
+
+                      if (
+                          key_lower
+                          in [
+                              "url",
+                              "imageurl",
+                              "image_url"
+                          ]
+                      ):
+
+                          if (
+                              isinstance(item, str)
+                              and item.startswith("http")
+                          ):
+
+                              result.append(item)
+
+                      else:
+
+                          result.extend(
+                              find_images(item)
+                          )
+
+              elif isinstance(value, list):
+
+                  for item in value:
+
+                      result.extend(
+                          find_images(item)
+                      )
+
+              return list(
+                  dict.fromkeys(result)
+              )
+
+          # =========================
+          # DIMENSION
+          # =========================
+
+          def get_area(title):
+
+              if not title:
+                  return 0
+
+              text = str(title).lower()
+
+              text = (
+                  text
+                  .replace("×", "x")
+                  .replace("х", "x")
+                  .replace("/", "x")
+              )
+
+              match = re.search(
+                  r"(\d{2,4})\s*x\s*(\d{2,4})",
+                  text
+              )
+
+              if not match:
+                  return 0
+
+              width = float(
+                  match.group(1)
+              )
+
+              height = float(
+                  match.group(2)
+              )
+
+              if width > 1000 or height > 1000:
+                  return 0
+
+              return (
+                  width
+                  * height
+                  / 10000
+              )
+
+          # =========================
+          # PRODUCT ANALYTICS
+          # =========================
+
+          product_stats = {}
+
+          total_sales = 0
+          total_production = 0
+          total_orders = set()
+
+          detailed_orders = []
+
+          for order, entry in order_entries:
+
+              order_id = order.get("id")
+
+              order_attributes = (
+                  order.get("attributes")
+                  or {}
+              )
+
+              entry_attributes = (
+                  entry.get("attributes")
+                  or {}
+              )
+
+              quantity = float(
+                  entry_attributes.get(
+                      "quantity"
+                  )
+                  or 1
+              )
+
+              sales = float(
+                  entry_attributes.get(
+                      "totalPrice"
+                  )
+                  or entry_attributes.get(
+                      "basePrice"
+                  )
+                  or 0
+              )
+
+              master_id = (
+                  get_master_product_id(
+                      entry
+                  )
+              )
+
+              product = (
+                  products.get(master_id)
+                  or {}
+              )
+
+              title = str(
+                  product.get("name")
+                  or product.get("title")
+                  or entry_attributes.get(
+                      "title"
+                  )
+                  or "Тауар"
+              )
+
+              code = str(
+                  product.get("code")
+                  or master_id
+                  or ""
+              )
+
+              area = get_area(title)
+
+              lower_title = title.lower()
+
+              is_panel = (
+                  "панно"
+                  in lower_title
+              )
+
+              is_light = any(
+                  word in lower_title
+                  for word in [
+                      "подсвет",
+                      "светильник",
+                      "с подсветкой"
+                  ]
+              )
+
+              if area:
+
+                  if is_panel:
+
+                      unit_cost = (
+                          area
+                          * PANEL_M2
+                      )
+
+                  else:
+
+                      unit_cost = (
+                          area
+                          * PAINTING_M2
+                      )
+
+              else:
+
+                  unit_cost = 0
+
+              if (
+                  is_panel
+                  and is_light
+              ):
+
+                  unit_cost += LIGHT_COST
+
+              production_cost = (
+                  unit_cost
+                  * quantity
+              )
+
+              total_sales += sales
+
+              total_production += (
+                  production_cost
+              )
+
+              total_orders.add(
+                  order_id
+              )
+
+              if code not in product_stats:
+
+                  product_stats[code] = {
+
+                      "code": code,
+
+                      "masterproduct_id":
+                          master_id,
+
+                      "title": title,
+
+                      "quantity": 0,
+
+                      "orders": set(),
+
+                      "sales": 0,
+
+                      "production_cost": 0,
+
+                      "area_m2": 0,
+
+                      "images":
+                          find_images(
+                              product.get(
+                                  "_raw",
+                                  {}
+                              )
+                          )
+
+                  }
+
+              stat = (
+                  product_stats[code]
+              )
+
+              stat["quantity"] += (
+                  quantity
+              )
+
+              stat["orders"].add(
+                  order_id
+              )
+
+              stat["sales"] += sales
+
+              stat["production_cost"] += (
+                  production_cost
+              )
+
+              stat["area_m2"] += (
+                  area * quantity
+              )
+
+              detailed_orders.append({
+
+                  "order_id":
+                      order_id,
+
+                  "status":
+                      order_attributes.get(
+                          "status"
+                      ),
+
+                  "delivery_mode":
+                      get_delivery_mode(
+                          order
+                      ),
+
+                  "product":
+                      title,
+
+                  "product_code":
+                      code,
+
+                  "quantity":
+                      quantity,
+
+                  "sales":
+                      round(
+                          sales,
+                          2
+                      )
+
+              })
+
+          # =========================
+          # FINANCIAL CALCULATION
+          # =========================
+
+          order_count = len(
+              total_orders
+          )
+
+          commission = (
+              total_sales
+              * COMMISSION
+          )
+
+          kaspi_pay = (
+              total_sales
+              * KASPI_PAY
+          )
+
+          tax = (
+              total_sales
+              * TAX
+          )
+
+          boxes = (
+              order_count
+              * BOX_COST
+          )
+
+          delivery = (
+              order_count
+              * DELIVERY_COST
+          )
+
+          # $100 таргет.
+          # USD_KZT 0 болса әзірше бөлек көрсетіледі.
+          ads_usd = 100
+
+          usd_kzt = float(
+              os.environ.get(
+                  "USD_KZT",
+                  "0"
+              )
+          )
+
+          ads_kzt = (
+              ads_usd
+              * usd_kzt
+          )
+
+          total_expenses = (
+
+              commission
+
+              + kaspi_pay
+
+              + tax
+
+              + boxes
+
+              + delivery
+
+              + total_production
+
+              + ads_kzt
+
+          )
+
+          net_profit = (
+              total_sales
+              - total_expenses
+          )
+
+          partner_share = (
+              net_profit / 2
+          )
+
+          # =========================
+          # PRODUCT RESULT
+          # =========================
+
+          products_result = []
+
+          for stat in (
+              product_stats.values()
+          ):
+
+              quantity = stat[
+                  "quantity"
+              ]
+
+              orders = len(
+                  stat["orders"]
+              )
+
+              sales = stat[
+                  "sales"
+              ]
+
+              production = stat[
+                  "production_cost"
+              ]
+
+              if quantity >= 5:
+
+                  performance = (
+                      "🔥 МЫҚТЫ"
+                  )
+
+              elif quantity >= 2:
+
+                  performance = (
+                      "🟡 ОРТАША"
+                  )
+
+              else:
+
+                  performance = (
+                      "🔴 ӨТІМІ АЗ"
+                  )
+
+              products_result.append({
+
+                  "title":
+                      stat["title"],
+
+                  "code":
+                      stat["code"],
+
+                  "masterproduct_id":
+                      stat[
+                          "masterproduct_id"
+                      ],
+
+                  "quantity":
+                      quantity,
+
+                  "orders":
+                      orders,
+
+                  "sales":
+                      round(
+                          sales,
+                          2
+                      ),
+
+                  "area_m2":
+                      round(
+                          stat["area_m2"],
+                          2
+                      ),
+
+                  "production_cost":
+                      round(
+                          production,
+                          2
+                      ),
+
+                  "performance":
+                      performance,
+
+                  "images":
+                      stat["images"]
+
+              })
+
+          products_result.sort(
+              key=lambda x:
+                  x["sales"],
+              reverse=True
+          )
+
+          for index, product in enumerate(
+              products_result,
+              start=1
+          ):
+
+              product[
+                  "rank"
+              ] = index
+
+          # =========================
+          # DASHBOARD JSON
+          # =========================
+
+          dashboard = {
+
+              "updated_at":
+                  datetime.now(
+                      timezone.utc
+                  ).strftime(
+                      "%Y-%m-%d %H:%M:%S UTC"
+                  ),
+
+              "summary": {
+
+                  "orders":
+                      order_count,
+
+                  "sales":
+                      round(
+                          total_sales,
+                          2
+                      ),
+
+                  "commission":
+                      round(
+                          commission,
+                          2
+                      ),
+
+                  "kaspi_pay":
+                      round(
+                          kaspi_pay,
+                          2
+                      ),
+
+                  "tax":
+                      round(
+                          tax,
+                          2
+                      ),
+
+                  "boxes":
+                      round(
+                          boxes,
+                          2
+                      ),
+
+                  "delivery":
+                      round(
+                          delivery,
+                          2
+                      ),
+
+                  "production":
+                      round(
+                          total_production,
+                          2
+                      ),
+
+                  "target_usd":
+                      ads_usd,
+
+                  "target_kzt":
+                      round(
+                          ads_kzt,
+                          2
+                      ),
+
+                  "total_expenses":
+                      round(
+                          total_expenses,
+                          2
+                      ),
+
+                  "net_profit":
+                      round(
+                          net_profit,
+                          2
+                      ),
+
+                  "partner_50":
+                      round(
+                          partner_share,
+                          2
+                      ),
+
+                  "my_50":
+                      round(
+                          partner_share,
+                          2
+                      )
+
               },
-              orders: $orders
-            }' > data/analytics.json
 
-          echo ""
-          echo "=============================="
-          echo "KASPI ANALYTICS"
-          echo "=============================="
-          echo "Total orders: $TOTAL_ORDERS"
-          echo "Total sales: $TOTAL_SALES ₸"
-          echo "Average check: $AVERAGE_CHECK ₸"
-          echo "Completed: $COMPLETED"
-          echo "Cancelled: $CANCELLED"
-          echo "Accepted: $ACCEPTED"
-          echo "New: $NEW"
-          echo "=============================="
+              "pickup_excluded":
+                  True,
+
+              "pickup_orders":
+                  len(
+                      pickup_orders
+                  ),
+
+              "products":
+                  products_result,
+
+              "orders":
+                  detailed_orders
+
+          }
+
+          with open(
+              "data/analytics.json",
+              "w",
+              encoding="utf-8"
+          ) as file:
+
+              json.dump(
+                  dashboard,
+                  file,
+                  ensure_ascii=False,
+                  indent=2
+              )
+
+          print("")
+          print(
+              "=============================="
+          )
+          print(
+              "KASPI ANALYTICS READY"
+          )
+          print(
+              "=============================="
+          )
+          print(
+              f"Orders: {order_count}"
+          )
+          print(
+              f"Sales: {total_sales:.2f} ₸"
+          )
+          print(
+              f"Production: "
+              f"{total_production:.2f} ₸"
+          )
+          print(
+              f"Net profit: "
+              f"{net_profit:.2f} ₸"
+          )
+          print(
+              f"Partner 50%: "
+              f"{partner_share:.2f} ₸"
+          )
+          print(
+              "=============================="
+          )
+
+          PY
 
       - name: Save analytics
         run: |
@@ -133,6 +1037,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes."
           else
-            git commit -m "Update Kaspi analytics"
+            git commit -m "Update Kaspi analytics dashboard"
             git push
           fi
