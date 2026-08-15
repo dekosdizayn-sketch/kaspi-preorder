@@ -1,0 +1,57 @@
+name: Kaspi API Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test Kaspi API connection
+        env:
+          KASPI_TOKEN: ${{ secrets.KASPI_TOKEN }}
+        run: |
+          set -u
+
+          echo "=== KASPI API TEST ==="
+
+          if [ -z "${KASPI_TOKEN:-}" ]; then
+            echo "ERROR: KASPI_TOKEN secret is empty or missing"
+            exit 1
+          fi
+
+          echo "Token: OK (hidden)"
+          echo "Connecting to Kaspi API..."
+
+          RESPONSE=$(curl \
+            --connect-timeout 15 \
+            --max-time 45 \
+            -sS \
+            -w "\nHTTP_CODE:%{http_code}\nTIME:%{time_total}\nSIZE:%{size_download}\n" \
+            -H "Content-Type: application/vnd.api+json" \
+            -H "X-Auth-Token: ${KASPI_TOKEN}" \
+            "https://kaspi.kz/shop/api/v2/orders" 2>&1)
+
+          echo "$RESPONSE"
+
+          if echo "$RESPONSE" | grep -q "HTTP_CODE:200"; then
+            echo "SUCCESS: Kaspi API responded with HTTP 200"
+            exit 0
+          fi
+
+          if echo "$RESPONSE" | grep -q "HTTP_CODE:401"; then
+            echo "ERROR: HTTP 401 - Kaspi token is invalid or not accepted"
+            exit 1
+          fi
+
+          if echo "$RESPONSE" | grep -q "HTTP_CODE:403"; then
+            echo "ERROR: HTTP 403 - access denied"
+            exit 1
+          fi
+
+          echo "ERROR: Kaspi API did not return HTTP 200"
+          exit 1
