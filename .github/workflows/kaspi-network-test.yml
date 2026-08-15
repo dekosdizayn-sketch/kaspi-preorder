@@ -1,0 +1,60 @@
+name: Kaspi Network Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test Kaspi network
+        env:
+          KASPI_TOKEN_NEW: ${{ secrets.KASPI_TOKEN_NEW }}
+        run: |
+          set -u
+
+          echo "=== KASPI NETWORK TEST ==="
+
+          echo "1. DNS test..."
+          getent hosts kaspi.kz || true
+
+          echo "2. HTTPS test..."
+          curl -I \
+            --connect-timeout 15 \
+            --max-time 20 \
+            -v \
+            "https://kaspi.kz/" \
+            2>&1 || true
+
+          echo "3. API test without token..."
+          curl \
+            --connect-timeout 15 \
+            --max-time 20 \
+            -sS \
+            -o /tmp/kaspi_response.txt \
+            -w "HTTP_CODE:%{http_code}\nTIME:%{time_total}\n" \
+            "https://kaspi.kz/shop/api/v2/orders" \
+            2>&1 || true
+
+          echo "4. API test WITH new token..."
+          if [ -z "${KASPI_TOKEN_NEW:-}" ]; then
+            echo "ERROR: KASPI_TOKEN_NEW is missing"
+            exit 1
+          fi
+
+          curl \
+            --connect-timeout 15 \
+            --max-time 20 \
+            -sS \
+            -o /tmp/kaspi_auth_response.txt \
+            -w "HTTP_CODE:%{http_code}\nTIME:%{time_total}\n" \
+            -H "Content-Type: application/vnd.api+json" \
+            -H "X-Auth-Token: ${KASPI_TOKEN_NEW}" \
+            "https://kaspi.kz/shop/api/v2/orders" \
+            2>&1 || true
+
+          echo "=== TEST FINISHED ==="
