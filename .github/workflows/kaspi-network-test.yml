@@ -11,50 +11,54 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Test Kaspi network
+      - name: Diagnose Kaspi connection
         env:
           KASPI_TOKEN_NEW: ${{ secrets.KASPI_TOKEN_NEW }}
         run: |
           set -u
 
-          echo "=== KASPI NETWORK TEST ==="
+          echo "=== KASPI NETWORK / API DIAGNOSTIC ==="
 
-          echo "1. DNS test..."
-          getent hosts kaspi.kz || true
+          echo "1. GitHub internet test..."
+          curl -4 --connect-timeout 10 --max-time 15 \
+            -sS -o /dev/null \
+            -w "GITHUB HTTP:%{http_code} TIME:%{time_total}\n" \
+            https://api.github.com || true
 
-          echo "2. HTTPS test..."
-          curl -I \
-            --connect-timeout 15 \
+          echo "2. Kaspi DNS..."
+          getent ahostsv4 kaspi.kz || true
+
+          echo "3. Kaspi HTTPS..."
+          curl -4 --http1.1 \
+            --connect-timeout 10 \
             --max-time 20 \
-            -v \
-            "https://kaspi.kz/" \
-            2>&1 || true
+            -sS -o /dev/null \
+            -w "KASPI HTTP:%{http_code} TIME:%{time_total}\n" \
+            https://kaspi.kz/ 2>&1 || true
 
-          echo "3. API test without token..."
-          curl \
-            --connect-timeout 15 \
+          echo "4. Kaspi Guide..."
+          curl -4 --http1.1 \
+            --connect-timeout 10 \
             --max-time 20 \
-            -sS \
-            -o /tmp/kaspi_response.txt \
-            -w "HTTP_CODE:%{http_code}\nTIME:%{time_total}\n" \
-            "https://kaspi.kz/shop/api/v2/orders" \
-            2>&1 || true
+            -sS -o /dev/null \
+            -w "GUIDE HTTP:%{http_code} TIME:%{time_total}\n" \
+            https://guide.kaspi.kz/ 2>&1 || true
 
-          echo "4. API test WITH new token..."
+          echo "5. Kaspi API schema WITH token..."
+
           if [ -z "${KASPI_TOKEN_NEW:-}" ]; then
             echo "ERROR: KASPI_TOKEN_NEW is missing"
             exit 1
           fi
 
-          curl \
-            --connect-timeout 15 \
-            --max-time 20 \
+          curl -4 --http1.1 \
+            --connect-timeout 10 \
+            --max-time 30 \
             -sS \
-            -o /tmp/kaspi_auth_response.txt \
-            -w "HTTP_CODE:%{http_code}\nTIME:%{time_total}\n" \
-            -H "Content-Type: application/vnd.api+json" \
+            -w "SCHEMA HTTP:%{http_code} TIME:%{time_total} SIZE:%{size_download}\n" \
+            -H "Accept: application/json" \
             -H "X-Auth-Token: ${KASPI_TOKEN_NEW}" \
-            "https://kaspi.kz/shop/api/v2/orders" \
+            "https://kaspi.kz/shop/api/products/import/schema" \
             2>&1 || true
 
-          echo "=== TEST FINISHED ==="
+          echo "=== DIAGNOSTIC FINISHED ==="
