@@ -1,0 +1,59 @@
+name: Kaspi API Test - New Store
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test new Kaspi API connection
+        env:
+          KASPI_TOKEN_NEW: ${{ secrets.KASPI_TOKEN_NEW }}
+
+        run: |
+          set -u
+
+          echo "=== KASPI NEW STORE API TEST ==="
+
+          if [ -z "${KASPI_TOKEN_NEW:-}" ]; then
+            echo "ERROR: KASPI_TOKEN_NEW secret is empty or missing"
+            exit 1
+          fi
+
+          echo "Token: OK (hidden)"
+          echo "Connecting to Kaspi API..."
+
+          HTTP_CODE=$(curl \
+            --connect-timeout 15 \
+            --max-time 45 \
+            -sS \
+            -o /dev/null \
+            -w "%{http_code}" \
+            -H "Content-Type: application/vnd.api+json" \
+            -H "X-Auth-Token: ${KASPI_TOKEN_NEW}" \
+            "https://kaspi.kz/shop/api/v2/orders")
+
+          echo "HTTP_CODE:${HTTP_CODE}"
+
+          if [ "${HTTP_CODE}" = "200" ]; then
+            echo "SUCCESS: New Kaspi store API responded with HTTP 200"
+            exit 0
+          fi
+
+          if [ "${HTTP_CODE}" = "401" ]; then
+            echo "ERROR: HTTP 401 - new Kaspi token is invalid or not accepted"
+            exit 1
+          fi
+
+          if [ "${HTTP_CODE}" = "403" ]; then
+            echo "ERROR: HTTP 403 - access denied for the new store token"
+            exit 1
+          fi
+
+          echo "ERROR: Kaspi API did not return HTTP 200"
+          exit 1
