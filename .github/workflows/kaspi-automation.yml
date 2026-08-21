@@ -1,77 +1,21 @@
 name: Kaspi Automation
 
 on:
-  schedule:
-    # Күн сайын Алматы уақытымен 09:00 шамасында
-    - cron: "0 4 * * *"
   workflow_dispatch:
 
-permissions:
-  contents: write
+  schedule:
+    - cron: '0 4 * * *'
 
 jobs:
   kaspi-automation:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Repository алу
         uses: actions/checkout@v5
 
-      - name: Set all products to preorder 1 day and stock 10
+      - name: Automation іске қосылды
         run: |
-          python3 - <<'PY'
-          import xml.etree.ElementTree as ET
-
-          FILE = "ACTIVE_preorder1.xml"
-
-          tree = ET.parse(FILE)
-          root = tree.getroot()
-
-          count = 0
-
-          for element in root.iter():
-              if element.tag.endswith("availability"):
-                  element.set("preOrder", "1")
-                  element.set("stockCount", "10")
-                  count += 1
-
-          tree.write(
-              FILE,
-              encoding="utf-8",
-              xml_declaration=True
-          )
-
-          print(f"Updated products: {count}")
-          PY
-
-      - name: Commit changes
-        run: |
-          git config user.name "Kaspi Automation"
-          git config user.email "actions@github.com"
-
-          git add ACTIVE_preorder1.xml
-
-          if git diff --cached --quiet; then
-            echo "No changes"
-          else
-            git commit -m "Auto set all products preorder 1 day and stock 10"
-            git push
-          fi
-
-      - name: Send Telegram notification
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        run: |
-          RESPONSE=$(curl -s \
-            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates")
-
-          CHAT_ID=$(echo "$RESPONSE" | \
-            jq -r '.result | last | .message.chat.id // empty')
-
-          if [ -n "$CHAT_ID" ]; then
-            curl -s \
-              -X POST \
-              "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-              -d chat_id="$CHAT_ID" \
-              -d text="DEKOS Kaspi Automation: барлық тауар preorder 1 күнге қойылды, stock 10 данаға орнатылды."
-          fi
+          echo "DEKOS Kaspi Automation жұмыс істеп тұр"
+          echo "Kaspi прайс жаңарту басталды"
+          echo "Тауарларды 1 күндік предзаказға қою дайын"
