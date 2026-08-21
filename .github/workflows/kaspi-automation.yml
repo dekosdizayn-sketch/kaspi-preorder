@@ -16,6 +16,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Telegram-ға басталғанын хабарлау
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=🟡 DEKOS Kaspi Automation іске қосылды.\nУақыты: $(date -u '+%Y-%m-%d %H:%M UTC')"
+
       - name: Repository алу
         uses: actions/checkout@v5
 
@@ -41,3 +50,23 @@ jobs:
             git commit -m "Auto: барлық тауар 1 күндік предзаказ"
             git push
           fi
+
+      - name: Telegram-ға сәтті аяқталғанын хабарлау
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=🟢 DEKOS Kaspi Automation сәтті аяқталды.\nБарлық тауар 1 күндік предзаказға тексерілді.\nУақыты: $(date -u '+%Y-%m-%d %H:%M UTC')"
+
+      - name: Telegram-ға қате туралы хабарлау
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=🔴 DEKOS Kaspi Automation қатемен тоқтады. GitHub Actions журналын тексеру керек.\nУақыты: $(date -u '+%Y-%m-%d %H:%M UTC')"
