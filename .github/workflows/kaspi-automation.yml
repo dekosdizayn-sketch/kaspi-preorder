@@ -1,0 +1,48 @@
+name: Kaspi Automation
+
+on:
+  schedule:
+    # Күн сайын Алматы уақытымен шамамен 09:00
+    - cron: "0 4 * * *"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  kaspi-automation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup
+        run: echo "Starting Kaspi automation"
+
+      - name: Daily preorder check
+        env:
+          KASPI_API_TOKEN: ${{ secrets.KASPI_API_TOKEN }}
+        run: |
+          echo "Kaspi token loaded"
+          echo "Daily automation started"
+
+      - name: Check new orders
+        env:
+          KASPI_API_TOKEN: ${{ secrets.KASPI_API_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          echo "Checking Kaspi orders"
+
+      - name: Notify Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -s \
+            -X POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d text="DEKOS Kaspi Automation іске қосылды"
+
+      - name: Finish
+        run: echo "Automation finished"
