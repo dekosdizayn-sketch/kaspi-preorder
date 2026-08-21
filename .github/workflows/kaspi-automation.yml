@@ -34,6 +34,7 @@ jobs:
           python-version: '3.12'
 
       - name: Барлық тауарды 1 күндік предзаказға қою
+        id: preorder
         run: |
           python set-preorder.py
 
@@ -56,10 +57,14 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TOTAL: ${{ steps.preorder.outputs.total }}
+          UPDATED: ${{ steps.preorder.outputs.updated }}
+          ALREADY_PREORDER: ${{ steps.preorder.outputs.already_preorder }}
+          SKIPPED: ${{ steps.preorder.outputs.skipped }}
         run: |
           curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
-            --data-urlencode "text=🟢 DEKOS Kaspi Automation сәтті аяқталды.\nБарлық тауар 1 күндік предзаказға тексерілді.\nУақыты: $(date -u '+%Y-%m-%d %H:%M UTC')"
+            --data-urlencode "text=🟢 DEKOS Kaspi Automation сәтті аяқталды.\n\n📦 Жалпы тексерілген тауар: ${TOTAL}\n🔄 Стоктан предзаказға өзгертілген тауар: ${UPDATED}\n📋 Бұрыннан предзаказдағы тауар: ${ALREADY_PREORDER}\n⚠️ Availability жоқ тауар: ${SKIPPED}\n\n⏱ Уақыты: $(date -u '+%Y-%m-%d %H:%M UTC')"
 
       - name: Telegram-ға қате туралы хабарлау
         if: failure()
