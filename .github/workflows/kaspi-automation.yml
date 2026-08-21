@@ -6,6 +6,9 @@ on:
   schedule:
     - cron: '0 4 * * *'
 
+permissions:
+  contents: write
+
 jobs:
   kaspi-automation:
     runs-on: ubuntu-latest
@@ -14,8 +17,25 @@ jobs:
       - name: Repository алу
         uses: actions/checkout@v5
 
-      - name: Automation іске қосылды
+      - name: Python қосу
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Барлық тауарды 1 күндік предзаказға қою
         run: |
-          echo "DEKOS Kaspi Automation жұмыс істеп тұр"
-          echo "Kaspi прайс жаңарту басталды"
-          echo "Тауарларды 1 күндік предзаказға қою дайын"
+          python set-preorder.py
+
+      - name: Өзгерісті GitHub-қа сақтау
+        run: |
+          git config user.name "DEKOS Kaspi Automation"
+          git config user.email "automation@github.com"
+
+          git add ACTIVE_preorder1.xml
+
+          if git diff --cached --quiet; then
+            echo "Өзгеріс жоқ"
+          else
+            git commit -m "Auto: барлық тауар 1 күндік предзаказ"
+            git push
+          fi
