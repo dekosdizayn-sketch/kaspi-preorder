@@ -6,7 +6,7 @@ XML_FILE = Path("ACTIVE_preorder1.xml")
 EXPECTED_COMPANY = "30457864"
 EXPECTED_MERCHANT = "30457864"
 EXPECTED_OFFERS = 50
-TARGET_PREORDER = "2"
+TARGET_PREORDER = "1"
 
 def local(tag):
     return tag.rsplit("}", 1)[-1]
@@ -72,5 +72,3 @@ if out:
         for k, v in summary.items():
             f.write(f"{k}={v}\n")
         f.write("blocked=false\n")
-
-# Manual test trigger: verify GitHub Actions and Telegram notification.
