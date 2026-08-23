@@ -1,0 +1,43 @@
+name: Restore Correct 50-Product Catalog
+
+on:
+  push:
+    paths:
+      - '.github/workflows/restore-correct-catalog.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Restore exact verified 50-product XML
+        run: |
+          python3 - <<'PY'
+          import base64, gzip, pathlib
+          data = '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'
+          pathlib.Path('ACTIVE_preorder1.xml').write_bytes(gzip.decompress(base64.b64decode(data)))
+          PY
+      - name: Validate exact store catalog
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          root=ET.parse('ACTIVE_preorder1.xml').getroot()
+          offers=[e for e in root.iter() if e.tag.rsplit('}',1)[-1]=='offer']
+          company=next(e.text for e in root.iter() if e.tag.rsplit('}',1)[-1]=='company')
+          merchant=next(e.text for e in root.iter() if e.tag.rsplit('}',1)[-1]=='merchantid')
+          assert company=='30457864', company
+          assert merchant=='30457864', merchant
+          assert len(offers)==50, len(offers)
+          print('VALID: 50 offers, company/merchant 30457864')
+          PY
+      - name: Commit restored catalog
+        run: |
+          git config user.name 'DEKOS Kaspi Repair'
+          git config user.email 'automation@github.com'
+          git add ACTIVE_preorder1.xml
+          git commit -m 'Restore exact verified 50-product catalog'
+          git push
