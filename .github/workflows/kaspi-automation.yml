@@ -31,7 +31,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           START_TIME=$(date -u '+%d.%m.%Y %H:%M UTC')
-          TEXT=$(cat <<'EOF'
+          TEXT=$(cat <<EOF
           <b>🟡 DEKOS Kaspi Automation іске қосылды</b>
 
           🔍 <b>Не істеп жатыр:</b> каталог тексеріліп жатыр
