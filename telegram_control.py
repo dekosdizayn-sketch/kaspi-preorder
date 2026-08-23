@@ -3,12 +3,16 @@ from pathlib import Path
 
 TOKEN=os.environ['TELEGRAM_BOT_TOKEN']; CHAT=str(os.environ['TELEGRAM_CHAT_ID'])
 STATE=Path('.github/telegram_bot_state.json'); XML=Path('ACTIVE_preorder1.xml')
+KEYBOARD={"keyboard":[["🔍 Статус","📊 Есеп"],["▶️ Іске қосу","ℹ️ Көмек"]],"resize_keyboard":True,"is_persistent":True}
 def local(t): return t.rsplit('}',1)[-1]
 def api(method, data=None):
     url=f'https://api.telegram.org/bot{TOKEN}/{method}'
     if data is None: return json.load(urllib.request.urlopen(url))
     body=urllib.parse.urlencode(data).encode(); return json.load(urllib.request.urlopen(url, body))
-def send(text): api('sendMessage', {'chat_id':CHAT,'text':text,'parse_mode':'HTML'})
+def send(text, keyboard=False):
+    data={'chat_id':CHAT,'text':text,'parse_mode':'HTML'}
+    if keyboard: data['reply_markup']=json.dumps(KEYBOARD,ensure_ascii=False)
+    api('sendMessage', data)
 def info():
     root=ET.parse(XML).getroot(); company=next((e.text.strip() for e in root.iter() if local(e.tag)=='company' and e.text),''); merchant=next((e.text.strip() for e in root.iter() if local(e.tag)=='merchantid' and e.text),'')
     offers=[]; seen=set(); preorder=0; available=0
@@ -28,13 +32,15 @@ for u in updates:
     uid=u.get('update_id',0)
     if uid<=state.get('last_update_id',0): continue
     state['last_update_id']=uid; changed=True
-    msg=u.get('message',{}); text=(msg.get('text') or '').split()[0].lower(); chat=str(msg.get('chat',{}).get('id',''))
+    msg=u.get('message',{}); raw=(msg.get('text') or '').strip(); text=raw.split()[0].lower() if raw else ''; chat=str(msg.get('chat',{}).get('id',''))
     if chat!=CHAT: continue
-    if text in ('/start','/help'):
-        send('<b>🤖 DEKOS Kaspi Bot</b>\n\n/status — каталогтың қазіргі жағдайы\n/report — толық есеп\n/run — 50 тауарды тексеріп, 1 күндік предзаказды іске қосу\n/help — командалар\n\n🛡 Бот тек осы Telegram чат пен 50 тауарлық тексерілген каталогқа рұқсат береді.')
-    elif text in ('/status','/report'):
+    if text in ('/start','/help') or raw=='ℹ️ Көмек':
+        send('<b>🤖 DEKOS Kaspi Bot</b>\n\nТөмендегі батырмалар арқылы басқарыңыз.\n\n🔍 Статус — каталогтың қазіргі жағдайы\n📊 Есеп — толық есеп\n▶️ Іске қосу — 50 тауарды тексеріп, 1 күндік предзаказды іске қосу\nℹ️ Көмек — батырмалар туралы ақпарат\n\n🛡 Бот тек осы Telegram чат пен 50 тауарлық тексерілген каталогқа рұқсат береді.', True)
+    elif text in ('/status',) or raw=='🔍 Статус':
         c,m,total,av,p=info(); send(f'<b>📊 DEKOS Kaspi Status</b>\n\n🏪 <b>Компания:</b> {c}\n🏬 <b>Магазин:</b> {m}\n📦 <b>Бірегей тауар:</b> {total}\n🟢 <b>Қолжетімді:</b> {av}\n🛒 <b>1 күндік предзаказ:</b> {p}\n\n🛡 Күтілетін каталог: 50 тауар')
-    elif text=='/run':
+    elif text in ('/report',) or raw=='📊 Есеп':
+        c,m,total,av,p=info(); send(f'<b>📋 DEKOS Kaspi толық есеп</b>\n\n🏪 <b>Компания:</b> {c}\n🏬 <b>Магазин:</b> {m}\n📦 <b>Барлық бірегей тауар:</b> {total}\n🟢 <b>Қолжетімді:</b> {av}\n🛒 <b>1 күндік предзаказ:</b> {p}\n⏳ <b>Қалғаны:</b> {max(av-p,0)}\n\n🎯 Қауіпсіздік лимиті: 50 тауар')
+    elif text=='/run' or raw=='▶️ Іске қосу':
         send('<b>🟡 Қолмен тексеру басталды</b>\n\n🔍 Каталог тексеріліп жатыр...\n🎯 Күтілетіні: 50 тауар\n🛒 Предзаказ: 1 күн')
         with tempfile.NamedTemporaryFile(delete=False) as f: out=f.name
         env=os.environ.copy(); env['GITHUB_OUTPUT']=out
@@ -49,5 +55,5 @@ for u in updates:
         else:
             send(f'<b>🔴 Қауіпсіздік үшін тоқтатылды</b>\n\n📦 <b>Табылған тауар:</b> {vals.get("total",0)}\n🛡 Ешқандай өзгеріс жасалған жоқ.')
     elif text.startswith('/'):
-        send('⚠️ Белгісіз команда. Барлық командалар: /help')
+        send('⚠️ Белгісіз команда. ℹ️ Көмек батырмасын басыңыз.', True)
 if changed: STATE.write_text(json.dumps(state,ensure_ascii=False))
