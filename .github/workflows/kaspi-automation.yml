@@ -31,16 +31,16 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           START_TIME=$(date -u '+%d.%m.%Y %H:%M UTC')
-          TEXT=$(cat <<EOF
-<b>🟡 DEKOS Kaspi Automation іске қосылды</b>
+          TEXT=$(cat <<'EOF'
+          <b>🟡 DEKOS Kaspi Automation іске қосылды</b>
 
-🔍 <b>Не істеп жатыр:</b> каталог тексеріліп жатыр
-🎯 <b>Күтілетін каталог:</b> 50 тауар
-🛒 <b>Предзаказ:</b> 2 күн
+          🔍 <b>Не істеп жатыр:</b> каталог тексеріліп жатыр
+          🎯 <b>Күтілетін каталог:</b> 50 тауар
+          🛒 <b>Предзаказ:</b> 2 күн
 
-🕒 <b>Уақыты:</b> ${START_TIME}
-EOF
-)
+          🕒 <b>Уақыты:</b> ${START_TIME}
+          EOF
+          )
           curl -fsS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
             -d parse_mode="HTML" \
@@ -78,38 +78,38 @@ EOF
           FINISH_TIME=$(date -u '+%d.%m.%Y %H:%M UTC')
           if [ "$OUTCOME" = "success" ]; then
             TEXT=$(cat <<EOF
-<b>🟢 DEKOS Kaspi Automation сәтті аяқталды</b>
+            <b>🟢 DEKOS Kaspi Automation сәтті аяқталды</b>
 
-━━━━━━━━━━━━━━━━
+            ━━━━━━━━━━━━━━━━
 
-🏪 <b>Компания:</b> ${COMPANY}
-🏬 <b>Магазин:</b> ${MERCHANT}
+            🏪 <b>Компания:</b> ${COMPANY}
+            🏬 <b>Магазин:</b> ${MERCHANT}
 
-📦 <b>Нақты тауар саны:</b> ${TOTAL}
-🔄 <b>2 күндік предзаказға өзгертілді:</b> ${UPDATED}
-📋 <b>Бұрыннан 2 күндік предзаказда:</b> ${ALREADY}
-⚠️ <b>Availability жоқ:</b> ${SKIPPED}
+            📦 <b>Нақты тауар саны:</b> ${TOTAL}
+            🔄 <b>2 күндік предзаказға өзгертілді:</b> ${UPDATED}
+            📋 <b>Бұрыннан 2 күндік предзаказда:</b> ${ALREADY}
+            ⚠️ <b>Availability жоқ:</b> ${SKIPPED}
 
-━━━━━━━━━━━━━━━━
+            ━━━━━━━━━━━━━━━━
 
-🕒 <b>Аяқталған уақыты:</b> ${FINISH_TIME}
-EOF
-)
+            🕒 <b>Аяқталған уақыты:</b> ${FINISH_TIME}
+            EOF
+            )
           else
             TEXT=$(cat <<EOF
-<b>🔴 DEKOS Kaspi Automation қауіпсіздік үшін тоқтатылды</b>
+            <b>🔴 DEKOS Kaspi Automation қауіпсіздік үшін тоқтатылды</b>
 
-⚠️ <b>XML каталог тексеруден өтпеді.</b>
+            ⚠️ <b>XML каталог тексеруден өтпеді.</b>
 
-📦 <b>Табылған тауар:</b> ${TOTAL}
-🏪 <b>Company:</b> ${COMPANY}
-🏬 <b>Merchant:</b> ${MERCHANT}
+            📦 <b>Табылған тауар:</b> ${TOTAL}
+            🏪 <b>Company:</b> ${COMPANY}
+            🏬 <b>Merchant:</b> ${MERCHANT}
 
-🛡 <b>Ешқандай өзгеріс жасалған жоқ.</b>
+            🛡 <b>Ешқандай өзгеріс жасалған жоқ.</b>
 
-🕒 <b>Уақыты:</b> ${FINISH_TIME}
-EOF
-)
+            🕒 <b>Уақыты:</b> ${FINISH_TIME}
+            EOF
+            )
           fi
           curl -fsS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
