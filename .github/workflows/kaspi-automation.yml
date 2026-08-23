@@ -5,6 +5,8 @@ on:
   push:
     paths:
       - '.github/workflows/kaspi-automation.yml'
+      - 'set-preorder.py'
+      - 'ACTIVE_preorder1.xml'
   schedule:
     - cron: '0 4 * * *'
 
@@ -14,15 +16,40 @@ permissions:
 jobs:
   kaspi-automation:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v5
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Telegram-ға басталғанын хабарлау
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          START_TIME=$(date -u '+%d.%m.%Y %H:%M UTC')
+          TEXT=$(cat <<EOF
+<b>🟡 DEKOS Kaspi Automation іске қосылды</b>
+
+🔍 <b>Не істеп жатыр:</b> каталог тексеріліп жатыр
+🎯 <b>Күтілетін каталог:</b> 50 тауар
+🛒 <b>Предзаказ:</b> 2 күн
+
+🕒 <b>Уақыты:</b> ${START_TIME}
+EOF
+)
+          curl -fsS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d parse_mode="HTML" \
+            --data-urlencode "text=${TEXT}"
+
       - name: Дәл 50 тауарды тексеру және 2 күндік предзаказ
         id: preorder
         continue-on-error: true
         run: python set-preorder.py
+
       - name: GitHub-қа тек дұрыс өзгерісті сақтау
         if: steps.preorder.outcome == 'success'
         run: |
@@ -33,7 +60,9 @@ jobs:
             git commit -m "Auto: verified 50-product catalog set to 2-day preorder"
             git push
           fi
-      - name: Telegram-ға нәтиже жіберу
+
+      - name: Telegram-ға нәтижені әдемі форматта жіберу
+        if: always()
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -45,28 +74,47 @@ jobs:
           SKIPPED: ${{ steps.preorder.outputs.skipped }}
           OUTCOME: ${{ steps.preorder.outcome }}
         run: |
+          FINISH_TIME=$(date -u '+%d.%m.%Y %H:%M UTC')
           if [ "$OUTCOME" = "success" ]; then
-            TEXT="🟢 DEKOS Kaspi Automation аяқталды
+            TEXT=$(cat <<EOF
+<b>🟢 DEKOS Kaspi Automation сәтті аяқталды</b>
 
-🏪 Company: ${COMPANY}
-🏬 Merchant: ${MERCHANT}
-📦 Нақты бірегей тауар: ${TOTAL}
-🔄 2 күндік предзаказға өзгертілді: ${UPDATED}
-📋 Бұрыннан 2 күндік предзаказ: ${ALREADY}
-⚠️ Availability жоқ: ${SKIPPED}"
+━━━━━━━━━━━━━━━━
+
+🏪 <b>Компания:</b> ${COMPANY}
+🏬 <b>Магазин:</b> ${MERCHANT}
+
+📦 <b>Нақты тауар саны:</b> ${TOTAL}
+🔄 <b>2 күндік предзаказға өзгертілді:</b> ${UPDATED}
+📋 <b>Бұрыннан 2 күндік предзаказда:</b> ${ALREADY}
+⚠️ <b>Availability жоқ:</b> ${SKIPPED}
+
+━━━━━━━━━━━━━━━━
+
+🕒 <b>Аяқталған уақыты:</b> ${FINISH_TIME}
+EOF
+)
           else
-            TEXT="🔴 Автоматизация ҚАУІПСІЗДІК ҮШІН ТОҚТАТЫЛДЫ
+            TEXT=$(cat <<EOF
+<b>🔴 DEKOS Kaspi Automation қауіпсіздік үшін тоқтатылды</b>
 
-Күтілген каталог сәйкес емес.
-📦 Табылған тауар: ${TOTAL}
-🏪 Company: ${COMPANY}
-🏬 Merchant: ${MERCHANT}
+⚠️ <b>XML каталог тексеруден өтпеді.</b>
 
-Тек Company 30457864, Merchant 30457864 және дәл 50 тауар болғанда ғана XML өзгереді."
+📦 <b>Табылған тауар:</b> ${TOTAL}
+🏪 <b>Company:</b> ${COMPANY}
+🏬 <b>Merchant:</b> ${MERCHANT}
+
+🛡 <b>Ешқандай өзгеріс жасалған жоқ.</b>
+
+🕒 <b>Уақыты:</b> ${FINISH_TIME}
+EOF
+)
           fi
           curl -fsS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d parse_mode="HTML" \
             --data-urlencode "text=${TEXT}"
+
       - name: Жарамсыз каталог болса workflow-ды қате аяқтау
         if: steps.preorder.outcome != 'success'
         run: exit 1
