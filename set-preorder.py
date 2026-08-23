@@ -72,3 +72,5 @@ if out:
         for k, v in summary.items():
             f.write(f"{k}={v}\n")
         f.write("blocked=false\n")
+
+# Manual test trigger: verify GitHub Actions and Telegram notification.
