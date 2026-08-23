@@ -1,0 +1,32 @@
+name: Telegram DEKOS Bot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  telegram-control:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Process Telegram commands
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python telegram_control.py
+      - name: Save valid catalog and command state
+        run: |
+          git config user.name "DEKOS Telegram Bot"
+          git config user.email "telegram-bot@github.com"
+          git add ACTIVE_preorder1.xml .github/telegram_bot_state.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Telegram bot: command state and catalog update"
+            git push
+          fi
