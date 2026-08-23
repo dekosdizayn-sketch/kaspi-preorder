@@ -2,6 +2,12 @@ name: Telegram Test
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/telegram-test.yml'
+
+permissions:
+  contents: read
 
 jobs:
   test:
@@ -23,6 +29,6 @@ jobs:
 
           curl -fsS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg chat_id "$CHAT_ID" '{chat_id: $chat_id, text: "✅ Telegram байланысы жұмыс істеп тұр! Kaspi заказдары туралы хабарламалар осы чатқа келеді."}')"
+            -d "$(jq -n --arg chat_id "$CHAT_ID" '{chat_id: $chat_id, text: "🧪 DEKOS Kaspi Bot тесті\n\n🟢 Telegram байланысы жұмыс істеп тұр.\n🏪 Company: 30457864\n🏬 Merchant: 30457864\n📦 Күтілетін каталог: 50 тауар\n🔄 Предзаказ: 2 күн\n⏰ GitHub Actions арқылы жіберілді."}')"
 
           echo "Telegram test message sent successfully."
