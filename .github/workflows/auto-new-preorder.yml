@@ -1,9 +1,7 @@
-name: Auto New Product Preorder
+name: Auto New Product Preorder (Safe)
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/30 * * * *"
 
 permissions:
   contents: write
@@ -11,185 +9,21 @@ permissions:
 jobs:
   preorder:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Detect new SKUs and set 1 day preorder
+      - uses: actions/checkout@v5
+      - name: Safety check before any change
         run: |
-          python3 <<'PY'
+          python3 - <<'PY'
           import xml.etree.ElementTree as ET
-          import json
-          import os
-          from datetime import datetime, timezone, timedelta
-
-          XML_FILE = "ACTIVE_preorder1.xml"
-          STATE_FILE = ".github/preorder_state.json"
-
-          if not os.path.exists(XML_FILE):
-              raise SystemExit(f"{XML_FILE} not found")
-
-          os.makedirs(".github", exist_ok=True)
-
-          # -------------------------
-          # LOAD STATE
-          # -------------------------
-
-          if os.path.exists(STATE_FILE):
-              with open(STATE_FILE, "r", encoding="utf-8") as f:
-                  state = json.load(f)
-          else:
-              state = {}
-
-          # -------------------------
-          # LOAD XML
-          # -------------------------
-
-          tree = ET.parse(XML_FILE)
-          root = tree.getroot()
-
-          now = datetime.now(timezone.utc)
-
-          current_skus = set()
-          new_count = 0
-          expired_count = 0
-
-          # -------------------------
-          # FIND OFFERS
-          # -------------------------
-
-          for offer in root.iter():
-              if not offer.tag.endswith("offer"):
-                  continue
-
-              sku = offer.get("sku")
-
-              if not sku:
-                  continue
-
-              current_skus.add(sku)
-
-              # Find availability
-              availability = None
-
-              for child in offer.iter():
-                  if child.tag.endswith("availability"):
-                      availability = child
-                      break
-
-              if availability is None:
-                  continue
-
-              # -------------------------
-              # NEW SKU
-              # -------------------------
-
-              if sku not in state:
-
-                  state[sku] = {
-                      "first_seen": now.isoformat(),
-                      "preorder_until": (
-                          now + timedelta(days=1)
-                      ).isoformat()
-                  }
-
-                  availability.set("preOrder", "1")
-
-                  new_count += 1
-
-                  print(
-                      f"NEW SKU: {sku} -> preorder 1 day"
-                  )
-
-              else:
-
-                  # -------------------------
-                  # CHECK EXPIRATION
-                  # -------------------------
-
-                  until_text = state[sku].get(
-                      "preorder_until"
-                  )
-
-                  if until_text:
-
-                      until = datetime.fromisoformat(
-                          until_text
-                      )
-
-                      if now >= until:
-
-                          availability.set(
-                              "preOrder",
-                              "0"
-                          )
-
-                          state[sku].pop(
-                              "preorder_until",
-                              None
-                          )
-
-                          expired_count += 1
-
-                          print(
-                              f"EXPIRED: {sku} -> preorder 0"
-                          )
-
-          # -------------------------
-          # REMOVE DELETED SKUS
-          # -------------------------
-
-          for sku in list(state.keys()):
-
-              if sku not in current_skus:
-                  del state[sku]
-
-          # -------------------------
-          # SAVE XML
-          # -------------------------
-
-          tree.write(
-              XML_FILE,
-              encoding="utf-8",
-              xml_declaration=True
-          )
-
-          # -------------------------
-          # SAVE STATE
-          # -------------------------
-
-          with open(
-              STATE_FILE,
-              "w",
-              encoding="utf-8"
-          ) as f:
-
-              json.dump(
-                  state,
-                  f,
-                  ensure_ascii=False,
-                  indent=2
-              )
-
-          print("")
-          print("==============================")
-          print(f"Current SKUs: {len(current_skus)}")
-          print(f"New SKUs: {new_count}")
-          print(f"Expired: {expired_count}")
-          print("==============================")
+          root = ET.parse('ACTIVE_preorder1.xml').getroot()
+          offers = [e for e in root.iter() if e.tag.rsplit('}',1)[-1] == 'offer']
+          company = next((e.text for e in root.iter() if e.tag.rsplit('}',1)[-1] == 'company'), '')
+          merchant = next((e.text for e in root.iter() if e.tag.rsplit('}',1)[-1] == 'merchantid'), '')
+          print(f'Company: {company}')
+          print(f'Merchant: {merchant}')
+          print(f'Offers: {len(offers)}')
+          if company != '30457864' or merchant != '30457864' or len(offers) != 50:
+              raise SystemExit('SAFETY STOP: expected exactly 50 offers for merchant 30457864')
           PY
-
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add ACTIVE_preorder1.xml .github/preorder_state.json
-
-          if git diff --cached --quiet; then
-            echo "No changes"
-          else
-            git commit -m "Auto update new products preorder"
-            git push
-          fi
+      - name: No automatic catalog change
+        run: echo "Catalog verified. Automatic changes are disabled until explicitly configured."
