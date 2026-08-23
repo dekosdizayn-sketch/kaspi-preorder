@@ -1,4 +1,3 @@
-# Manual test trigger
 name: Kaspi Automation
 
 on:
@@ -36,7 +35,7 @@ jobs:
 
           🔍 <b>Не істеп жатыр:</b> каталог тексеріліп жатыр
           🎯 <b>Күтілетін каталог:</b> 50 тауар
-          🛒 <b>Предзаказ:</b> 2 күн
+          🛒 <b>Предзаказ:</b> 1 күн
 
           🕒 <b>Уақыты:</b> ${START_TIME}
           EOF
@@ -46,7 +45,7 @@ jobs:
             -d parse_mode="HTML" \
             --data-urlencode "text=${TEXT}"
 
-      - name: Дәл 50 тауарды тексеру және 2 күндік предзаказ
+      - name: Дәл 50 тауарды тексеру және 1 күндік предзаказ
         id: preorder
         continue-on-error: true
         run: python set-preorder.py
@@ -58,7 +57,7 @@ jobs:
           git config user.email "automation@github.com"
           git add ACTIVE_preorder1.xml
           if ! git diff --cached --quiet; then
-            git commit -m "Auto: verified 50-product catalog set to 2-day preorder"
+            git commit -m "Auto: verified 50-product catalog set to 1-day preorder"
             git push
           fi
 
@@ -86,8 +85,8 @@ jobs:
             🏬 <b>Магазин:</b> ${MERCHANT}
 
             📦 <b>Нақты тауар саны:</b> ${TOTAL}
-            🔄 <b>2 күндік предзаказға өзгертілді:</b> ${UPDATED}
-            📋 <b>Бұрыннан 2 күндік предзаказда:</b> ${ALREADY}
+            🔄 <b>1 күндік предзаказға өзгертілді:</b> ${UPDATED}
+            📋 <b>Бұрыннан 1 күндік предзаказда:</b> ${ALREADY}
             ⚠️ <b>Availability жоқ:</b> ${SKIPPED}
 
             ━━━━━━━━━━━━━━━━
