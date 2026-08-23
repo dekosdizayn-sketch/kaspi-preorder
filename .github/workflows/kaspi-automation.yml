@@ -11,19 +11,15 @@ permissions:
 jobs:
   kaspi-automation:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v5
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Тауар санын тексеру және 1 күндік предзаказ
+      - name: Дәл 50 тауарды тексеру және 2 күндік предзаказ
         id: preorder
         continue-on-error: true
-        env:
-          MAX_EXPECTED_OFFERS: '100'
         run: python set-preorder.py
 
       - name: GitHub-қа тек дұрыс өзгерісті сақтау
@@ -33,7 +29,7 @@ jobs:
           git config user.email "automation@github.com"
           git add ACTIVE_preorder1.xml
           if ! git diff --cached --quiet; then
-            git commit -m "Auto: valid catalog set to 1-day preorder"
+            git commit -m "Auto: verified 50-product catalog set to 2-day preorder"
             git push
           fi
 
@@ -55,18 +51,18 @@ jobs:
 🏪 Company: ${COMPANY}
 🏬 Merchant: ${MERCHANT}
 📦 Нақты бірегей тауар: ${TOTAL}
-🔄 1 күндік предзаказға өзгертілді: ${UPDATED}
-📋 Бұрыннан 1 күндік предзаказ: ${ALREADY}
+🔄 2 күндік предзаказға өзгертілді: ${UPDATED}
+📋 Бұрыннан 2 күндік предзаказ: ${ALREADY}
 ⚠️ Availability жоқ: ${SKIPPED}"
           else
             TEXT="🔴 Автоматизация ҚАУІПСІЗДІК ҮШІН ТОҚТАТЫЛДЫ
 
-XML-де 100-ден көп тауар бар немесе каталог дұрыс емес.
+Күтілген каталог сәйкес емес.
 📦 Табылған тауар: ${TOTAL}
 🏪 Company: ${COMPANY}
 🏬 Merchant: ${MERCHANT}
 
-Ескі/басқа магазиннің XML файлы өзгертілген жоқ."
+Тек Company 30457864, Merchant 30457864 және дәл 50 тауар болғанда ғана XML өзгереді."
           fi
           curl -fsS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
