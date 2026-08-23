@@ -7,7 +7,7 @@
             <ns0:model>Стеллаж напольный , 37x37x200 см, белый</ns0:model>
             <ns0:brand />
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="4.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="4.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">61000</ns0:cityprice>
@@ -17,7 +17,7 @@
             <ns0:model>Кухонный гарнитур livo LIVO Shugyla Gray, 100x210х60 см, ЛДСП, серый</ns0:model>
             <ns0:brand>livo</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">87000</ns0:cityprice>
@@ -27,7 +27,7 @@
             <ns0:model>Стеллаж напольный livo LEO, 120x40x210 см, белый</ns0:model>
             <ns0:brand>livo</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">85000</ns0:cityprice>
@@ -37,7 +37,7 @@
             <ns0:model>Шкаф для документов 707183890, 70х32х190 см</ns0:model>
             <ns0:brand>Без бренда</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="4.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="4.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">69990</ns0:cityprice>
@@ -47,7 +47,7 @@
             <ns0:model>Детский распашной шкаф livo LIVO ARCO  125х45х215 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -57,7 +57,7 @@
             <ns0:model>Стеллаж напольный , 150x45x200 см, Орех кария</ns0:model>
             <ns0:brand />
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="4.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="4.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">91000</ns0:cityprice>
@@ -67,7 +67,7 @@
             <ns0:model>Кухонный гарнитур livo LIVO SHUGYLA — OAK WOOD, 100x210х60 см, ЛДСП, коричневый</ns0:model>
             <ns0:brand>livo</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">89900</ns0:cityprice>
@@ -77,7 +77,7 @@
             <ns0:model>Кухонный гарнитур livo Livo Streamline 700 Верх шкаф размер130:72:30 нш 130:85:50, 130x50x215 см, Дуб сонома</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="10.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="10.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">98000</ns0:cityprice>
@@ -87,7 +87,7 @@
             <ns0:model>Детский шкаф-пенал livo Livo 80х45х215 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="12.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="12.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">85000</ns0:cityprice>
@@ -97,7 +97,7 @@
             <ns0:model>Распашной шкаф , 80x200х45 см, сканди</ns0:model>
             <ns0:brand />
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">90000</ns0:cityprice>
@@ -107,7 +107,7 @@
             <ns0:model>Кухонный гарнитур livo LIVO BLACK, 100x210х60 см, ЛДСП, черный</ns0:model>
             <ns0:brand>livo</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">86000</ns0:cityprice>
@@ -117,7 +117,7 @@
             <ns0:model>Стеллаж напольный livo 00000008, 42x42x210 см, белый</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="11.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="11.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">58000</ns0:cityprice>
@@ -127,7 +127,7 @@
             <ns0:model>Офисный стеллаж 604346391, 37х37х200 см</ns0:model>
             <ns0:brand>Без бренда</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">54000</ns0:cityprice>
@@ -137,7 +137,7 @@
             <ns0:model>Стеллаж напольный Livo006, 37x37x200 см, белый, коричневый</ns0:model>
             <ns0:brand>Без бренда</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">53990</ns0:cityprice>
@@ -147,7 +147,7 @@
             <ns0:model>Кухонный гарнитур livo LIVO MINI KITCHEN, 100x205х60 см, ЛДСП, мультиколор</ns0:model>
             <ns0:brand>livo</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="4.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="4.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">85000</ns0:cityprice>
@@ -157,7 +157,7 @@
             <ns0:model>Стеллаж напольный , 100x45x180 см, белый, голубой</ns0:model>
             <ns0:brand />
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">85000</ns0:cityprice>
@@ -167,7 +167,7 @@
             <ns0:model>Детский распашной шкаф livo LIVO ARCO Фьорд Гладкий 6 125х45х215 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -177,7 +177,7 @@
             <ns0:model>Кухонный шкаф напольный , 160x50x215 см</ns0:model>
             <ns0:brand />
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="9.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="9.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">95000</ns0:cityprice>
@@ -187,7 +187,7 @@
             <ns0:model>Детский распашной шкаф livo Детский распашной шкаф LIVO ARCO «Аквамарин» 12545215 см 125х45х215 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="10.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="10.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -197,7 +197,7 @@
             <ns0:model>Детский распашной шкаф livo Детский шкаф LIVO ARCO «Зелёный Самшит» 12545215 см, 3 двери, белый корпус 125х45х215 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -207,7 +207,7 @@
             <ns0:model>Детский распашной шкаф livo Детский шкаф LIVO ARCO «Аквамарин» 125х45х215 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -217,7 +217,7 @@
             <ns0:model>Детский распашной шкаф livo LIVO ARCO Мятный Дуэт 125х45х215 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="4.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="4.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -227,7 +227,7 @@
             <ns0:model>Кухонный гарнитур Shugyla 531AIF, 120x210х60 см, ЛДСП, белый</ns0:model>
             <ns0:brand>shugyla</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">85000</ns0:cityprice>
@@ -237,7 +237,7 @@
             <ns0:model>Кухонный шкаф напольный , 100x60x210 см</ns0:model>
             <ns0:brand />
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="20.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="20.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">85000</ns0:cityprice>
@@ -247,7 +247,7 @@
             <ns0:model>Кухонный гарнитур livo LIVO Shugyla — NAVY BLUE, 100x210х60 см, ЛДСП, синий</ns0:model>
             <ns0:brand>livo</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">89990</ns0:cityprice>
@@ -257,7 +257,7 @@
             <ns0:model>Стенка LIVO Nero Gold, черный</ns0:model>
             <ns0:brand>Без бренда</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">98000</ns0:cityprice>
@@ -267,7 +267,7 @@
             <ns0:model>Детский распашной шкаф livo Фьорд Гладкий livo 125х45х215 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="9.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="9.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -277,7 +277,7 @@
             <ns0:model>Детский распашной шкаф livo Лавандовая Арка 125х45х215 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -287,7 +287,7 @@
             <ns0:model>Стеллаж напольный livo LV-1200 , 40x40x185 см, белый</ns0:model>
             <ns0:brand>livo</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">65000</ns0:cityprice>
@@ -297,7 +297,7 @@
             <ns0:model>Шкаф-пенал напольный KONSENSA Сохо, 30x35x190 см, серый, коричневый</ns0:model>
             <ns0:brand>konsensa</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">49999</ns0:cityprice>
@@ -307,7 +307,7 @@
             <ns0:model>Кухонный гарнитур livo LIVO Shugyla — SKY BLUE, 100x210х60 см, ЛДСП, голубой</ns0:model>
             <ns0:brand>livo</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">89990</ns0:cityprice>
@@ -317,7 +317,7 @@
             <ns0:model>Распашной шкаф , 80x200х45 см, капучино</ns0:model>
             <ns0:brand />
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">90000</ns0:cityprice>
@@ -327,7 +327,7 @@
             <ns0:model>Стеллаж напольный , 80x30x170 см, белый</ns0:model>
             <ns0:brand />
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="15.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="15.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">50000</ns0:cityprice>
@@ -337,7 +337,7 @@
             <ns0:model />
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="10.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="10.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">90000</ns0:cityprice>
@@ -347,7 +347,7 @@
             <ns0:model>Кухонный гарнитур livo LIVO Shugyla GREEN, 100x210х60 см, ЛДСП, зеленый</ns0:model>
             <ns0:brand>livo</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">89000</ns0:cityprice>
@@ -357,7 +357,7 @@
             <ns0:model>Кухонный гарнитур Shugyla 531AIF, 100x210х60 см, ЛДСП, белый</ns0:model>
             <ns0:brand>shugyla</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="28.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="28.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">85000</ns0:cityprice>
@@ -367,7 +367,7 @@
             <ns0:model>Детский распашной шкаф livo LIVO ARCO Зелёный Самшит 125х45х215 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -377,7 +377,7 @@
             <ns0:model>Кухонный гарнитур livo LIVO Nordic Mini 1300, 130x215х30 см, ЛДСП, белый</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="10.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="10.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -387,7 +387,7 @@
             <ns0:model>Стеллаж напольный livo 0000007, 40x40x210 см, белый</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="10.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="10.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">70000</ns0:cityprice>
@@ -397,7 +397,7 @@
             <ns0:model>Детский шкаф-пенал  120х40х180 см</ns0:model>
             <ns0:brand />
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="4.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="4.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -407,7 +407,7 @@
             <ns0:model />
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="10.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="10.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -417,7 +417,7 @@
             <ns0:model />
             <ns0:brand />
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="10.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="10.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -427,7 +427,7 @@
             <ns0:model>Детский распашной шкаф livo Arco Wardrobe 125х45х215 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="4.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="4.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -437,7 +437,7 @@
             <ns0:model>Стеллаж напольный livo 261141617, 120x40x180 см, белый, коричневый</ns0:model>
             <ns0:brand>livo</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">98000</ns0:cityprice>
@@ -447,7 +447,7 @@
             <ns0:model>Детский распашной шкаф livo Aura 100х55х200 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -457,7 +457,7 @@
             <ns0:model>Детский распашной шкаф livo ARCTIC LUNA 100х45х180 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="105.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="105.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -467,7 +467,7 @@
             <ns0:model>Детский распашной шкаф livo Moonbloom 80х45х150 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="105.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="105.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -477,7 +477,7 @@
             <ns0:model>Распашной шкаф , 800x180х45 см, светло серый</ns0:model>
             <ns0:brand />
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="5.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="5.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99999</ns0:cityprice>
@@ -487,7 +487,7 @@
             <ns0:model>Полка AAA Компакт ПК-Д4, 81х15x27 см, белый</ns0:model>
             <ns0:brand>aaa</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="2.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="2.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">3000</ns0:cityprice>
@@ -497,7 +497,7 @@
             <ns0:model>Детский распашной шкаф livo 667621289 180х45х120 см</ns0:model>
             <ns0:brand>livo-mebel</ns0:brand>
             <ns0:availabilities>
-                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="2" stockCount="9.0" />
+                <ns0:availability available="yes" storeId="30457864_PP1" preOrder="1" stockCount="9.0" />
             </ns0:availabilities>
             <ns0:cityprices>
                 <ns0:cityprice cityId="750000000">99990</ns0:cityprice>
