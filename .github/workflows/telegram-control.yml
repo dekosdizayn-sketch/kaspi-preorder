@@ -2,8 +2,12 @@ name: Telegram DEKOS Bot
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'telegram_control.py'
+      - '.github/workflows/telegram-control.yml'
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/5 * * * *'
 
 permissions:
   contents: write
